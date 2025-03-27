@@ -1,0 +1,99 @@
+✅ 1. Brute Force using Transpose + Arrays.equals()
+📦 Time: O(n^3) | Space: O(n^2)
+java
+Copy
+Edit
+// Brute Force: Compare every row with every column using transposed grid
+class Solution {
+    public int equalPairs(int[][] grid) {
+        int n = grid.length;
+        int[][] transpose = new int[n][n];
+
+        // Create transposed grid
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                transpose[j][i] = grid[i][j];
+            }
+        }
+
+        int count = 0;
+
+        // Compare each row with each column (now a row in transposed grid)
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (Arrays.equals(grid[i], transpose[j])) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+}
+✅ 2. Using Arrays.toString() for HashMap Matching
+📦 Time: O(n^2 * n) | Space: O(n^2)
+java
+Copy
+Edit
+// Use Arrays.toString() to convert rows and columns into strings and match using HashMap
+class Solution {
+    public int equalPairs(int[][] grid) {
+        int n = grid.length;
+        Map<String, Integer> rowMap = new HashMap<>();
+        int count = 0;
+
+        // Store string of each row with its frequency
+        for (int[] row : grid) {
+            String key = Arrays.toString(row);
+            rowMap.put(key, rowMap.getOrDefault(key, 0) + 1);
+        }
+
+        // Build column as array, convert to string and check in map
+        for (int col = 0; col < n; col++) {
+            int[] colArray = new int[n];
+            for (int row = 0; row < n; row++) {
+                colArray[row] = grid[row][col];
+            }
+            String colKey = Arrays.toString(colArray);
+            count += rowMap.getOrDefault(colKey, 0);
+        }
+
+        return count;
+    }
+}
+✅ 3. Optimized: StringBuilder for Hash Keys
+📦 Time: O(n^2) avg, O(n^3) worst | Space: O(n^2)
+java
+Copy
+Edit
+// Optimized version using StringBuilder to avoid Arrays.toString overhead
+class Solution {
+    public int equalPairs(int[][] grid) {
+        int n = grid.length;
+        Map<String, Integer> rowMap = new HashMap<>();
+        int count = 0;
+
+        // Store each row as delimited string key in map
+        for (int[] row : grid) {
+            StringBuilder sb = new StringBuilder();
+            for (int val : row) sb.append(val).append("#"); // use delimiter to separate values
+            String key = sb.toString();
+            rowMap.put(key, rowMap.getOrDefault(key, 0) + 1);
+        }
+
+        // Convert each column to string and compare with rowMap
+        for (int col = 0; col < n; col++) {
+            StringBuilder sb = new StringBuilder();
+            for (int row = 0; row < n; row++) sb.append(grid[row][col]).append("#");
+            String colKey = sb.toString();
+            count += rowMap.getOrDefault(colKey, 0);
+        }
+
+        return count;
+    }
+}
+📘 Summary Table
+Approach	Time Complexity	Space Complexity	Notes
+Brute Force	O(n^3)	O(n^2)	Clean but slow
+Arrays.toString()	O(n^2 * n)	O(n^2)	Faster but not optimal
+StringBuilder Hash	✅ O(n^2) (avg)	O(n^2)	✅ Best performance & clean syntax
